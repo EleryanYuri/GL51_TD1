@@ -7,6 +7,12 @@ import javax.inject.Inject
 /**
  * Permet l'update d'une database via cloud
  */
+@Singleton
+/**
+ * test changement
+ */
+
+
 class CloudUpdateDatabaseServiceImpl implements gl51.service.UpdateDatabaseService {
 
     @Inject
