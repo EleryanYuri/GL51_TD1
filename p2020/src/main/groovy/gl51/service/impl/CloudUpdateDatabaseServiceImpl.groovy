@@ -5,7 +5,7 @@ import gl51.service.CloudAccessService
 import javax.inject.Inject
 
 /**
- * Permet l'update d'une database via cloud
+ * Allow to update a databse via cloud
  */
 @Singleton
 /**
