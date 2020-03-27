@@ -11,8 +11,20 @@ class MovieRegistryImplTest extends Specification {
     @Inject
     MovieRegistryImpl registry
 
-    void "test qui plante"(){
+    void "Injection should work"(){
         expect:
             registry != null
+    }
+
+    void "Injection should be empty"(){
+        expect:
+            registry.listFavorites() == []
+    }
+
+    void "adding a favorite should populate the database"(){
+        when:
+            registry.addMovieToFavorites("aaaaa")
+        then:
+            registry.listFavorites().size() == 1
     }
 }
