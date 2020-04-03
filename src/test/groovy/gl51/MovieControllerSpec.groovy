@@ -1,11 +1,16 @@
 package gl51
 
+import gl51.movie.data.Movie
+import gl51.movie.data.MovieRequest
+import io.micronaut.core.type.Argument
+import io.micronaut.http.HttpRequest
 import io.micronaut.http.client.annotation.Client
 import io.micronaut.runtime.server.EmbeddedServer
 import io.micronaut.test.annotation.MicronautTest
 import io.micronaut.http.client.RxHttpClient
 import io.micronaut.http.HttpResponse
 import io.micronaut.http.HttpStatus
+import io.reactivex.Flowable
 import spock.lang.AutoCleanup
 import spock.lang.Specification
 import spock.lang.Shared
@@ -23,9 +28,20 @@ class MovieControllerSpec extends Specification {
 
     void "test index"() {
         given:
-        HttpResponse response = client.toBlocking().exchange("/movie")
+            Flowable flowable = client.retrieve(HttpRequest.GET("/movie"),
+                    Argument.listOf(Movie))
+            def content = flowable.firstElement()
 
         expect:
-        response.status == HttpStatus.OK
+            content.blockingGet() == []
+    }
+
+    void "test movie creation"(){
+        given:
+            HttpResponse response = client.toBlocking().exchange(
+                    HttpRequest.POST("/movie", new MovieRequest(imdbId: "aaaa"))
+            )
+        expect:
+            response.status == HttpStatus.CREATED
     }
 }
