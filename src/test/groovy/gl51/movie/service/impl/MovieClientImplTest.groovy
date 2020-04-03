@@ -19,8 +19,8 @@ class MovieClientImplTest extends Specification {
 
     void "Injection should work"(){
         expect:
-        movieClientMock != null
-        registry != null
+            movieClientMock != null
+            registry != null
     }
 
     void "Getting a movie by it's imdb ID should work"(){
@@ -28,9 +28,9 @@ class MovieClientImplTest extends Specification {
             movieClientMock.getMovieDetail("1234abcd")
 
         then:
-        Movie movie = new Movie(imdbId: "1234abcd")
-        registry.addMovieToFavorites(movie.imdbId)
-        registry.listFavorites().size() == 1
+            Movie movie = new Movie(imdbId: "1234abcd")
+            registry.addMovieToFavorites(movie.imdbId)
+            registry.listFavorites().size() == 1
 
     }
 
