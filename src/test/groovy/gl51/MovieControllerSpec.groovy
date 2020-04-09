@@ -2,6 +2,9 @@ package gl51
 
 import gl51.movie.data.Movie
 import gl51.movie.data.MovieRequest
+import gl51.movie.service.MovieClient
+import gl51.movie.service.impl.MovieClientImpl
+import gl51.movie.service.impl.MovieRegistryImpl
 import io.micronaut.core.type.Argument
 import io.micronaut.http.HttpRequest
 import io.micronaut.http.client.annotation.Client
@@ -10,6 +13,7 @@ import io.micronaut.test.annotation.MicronautTest
 import io.micronaut.http.client.RxHttpClient
 import io.micronaut.http.HttpResponse
 import io.micronaut.http.HttpStatus
+import io.micronaut.test.annotation.MockBean
 import io.reactivex.Flowable
 import spock.lang.AutoCleanup
 import spock.lang.Specification
@@ -25,6 +29,9 @@ class MovieControllerSpec extends Specification {
 
     @Shared @AutoCleanup @Inject @Client("/")
     RxHttpClient client
+
+    @Inject
+    MovieRegistryImpl registry
 
     void "test index"() {
         given:
@@ -43,5 +50,15 @@ class MovieControllerSpec extends Specification {
             )
         expect:
             response.status == HttpStatus.CREATED
+            registry.listFavorites().size() == 1
+            registry.listFavorites().find{it.title = "my movie"}
     }
+
+    @MockBean(MovieClientImpl)
+    MovieClient movieClient() {
+        def mock = Mock(MovieClient)
+        mock.getMovieDetail("aaaa") >> new Movie(imdbId: "aaaa", title: "my movie")
+        mock
+    }
+
 }
