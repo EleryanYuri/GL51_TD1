@@ -29,11 +29,15 @@ class MovieControllerSpec extends Specification {
     @Shared @AutoCleanup @Inject @Client("/")
     RxHttpClient client
 
+
+    Flowable getFlowable (){
+        Flowable flowable = client.retrieve(HttpRequest.GET("/movie"),
+                Argument.listOf(Movie))
+    }
+
     void "test index"() {
         given:
-            Flowable flowable = client.retrieve(HttpRequest.GET("/movie"),
-                    Argument.listOf(Movie))
-            def content = flowable.firstElement().blockingGet()
+            def content = getFlowable().firstElement().blockingGet()
 
         expect:
             content == []
@@ -44,9 +48,7 @@ class MovieControllerSpec extends Specification {
             HttpResponse response = client.toBlocking().exchange(
                     HttpRequest.POST("/movie", new MovieRequest(imdbId: "aaaa"))
             )
-            Flowable flowable = client.retrieve(HttpRequest.GET("/movie"),
-                    Argument.listOf(Movie))
-            def content = flowable.firstElement().blockingGet()
+            def content = getFlowable().firstElement().blockingGet()
         expect:
             response.status == HttpStatus.CREATED
             /*registry.listFavorites().size() == 1
